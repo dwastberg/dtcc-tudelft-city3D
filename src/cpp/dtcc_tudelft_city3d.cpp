@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(_bindings, m)
+PYBIND11_MODULE(_dtcc_tudelft_city3D, m)
 {
   m.def("add", &add, "A function that adds two numbers");
   m.def("sub", &sub, "A function that subtracts two numbers");

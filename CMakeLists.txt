@@ -20,7 +20,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DLLVM_ENABLE_ASSERTIONS=ON")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -52,10 +52,6 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src)
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 
 add_subdirectory(src)
-
-pybind11_add_module(_bindings MODULE ${CMAKE_SOURCE_DIR}/src/cpp/bindings.cpp)
-target_compile_definitions(_bindings PRIVATE VERSION_INFO=${PROJECT_VERSION})
-install(TARGETS _bindings DESTINATION dtcc_template)
 
 # Add tests
 # ADD_SUBDIRECTORY(tests/cpp)
