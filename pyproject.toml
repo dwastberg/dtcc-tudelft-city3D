@@ -3,15 +3,11 @@ requires = ["scikit-build-core", "pybind11==2.10.*", "wheel"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "dtcc-template"
+name = "dtcc-tudelft-city3D"
 version = "0.0.1"
-description = "DTCC Template"
+description = "DTCC bindings for TUDelft's City3D"
 readme = "README.md"
-authors = [
-  { name = "Anders Logg", email = "logg@chalmers.se" },
-  { name = "Vasilis Naserentin", email = "vasilis.naserentin@chalmers.se" },
-  { name = "Dag Wästberg", email = "dwastberg@gmail.com" },
-]
+authors = [{ name = "Dag Wästberg", email = "dwastberg@gmail.com" }]
 requires-python = ">=3.10"
 classifiers = [
   "Intended Audience :: Science/Research",
@@ -19,7 +15,13 @@ classifiers = [
   "Programming Language :: Python :: C++",
   "License :: OSI Approved :: MIT License",
 ]
-dependencies = ["pybind11 >= 2.10.0, < 2.11.0"]
+dependencies = [
+  "pybind11 >= 2.10.0, < 2.11.0",
+  "numpy",
+  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
+  "dtcc-io@git+https://github.com/dtcc-platform/dtcc-io.git@develop",
+  "dtcc-builder@git+https://github.com/dtcc-platform/dtcc-builder.git@develop",
+]
 
 [project.optional-dependencies]
 test = ["pytest"]
