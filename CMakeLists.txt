@@ -46,6 +46,7 @@ find_package(pybind11 REQUIRED)
 
 # Set include directories
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/include)
+include_directories(${CMAKE_SOURCE_DIR}/src/cpp/City3D/code)
 
 # Set installation directory
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src)
