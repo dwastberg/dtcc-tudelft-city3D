@@ -23,7 +23,7 @@ def generate_building_meshes(city: City, set_ground_to_zero=True):
         if set_ground_to_zero:
             pts[:, 2] -= ground_level
             ground_level = 0
-        footprint = np.array(list(building.footprint.exterior.coords))
+        footprint = np.array(list(building.footprint.exterior.coords)[:-1])
         tmp = tempfile.NamedTemporaryFile(suffix='.obj', delete=False)
         tmp_file = tmp.name
         tmp.close()
