@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
-
 
 set(basic_HEADERS
         assertions.h
@@ -29,7 +28,7 @@ set(basic_HEADERS
         record_id.h
         smart_pointer.h
         stop_watch.h
-        )
+)
 
 set(basic_SOURCES
         assertions.cpp
@@ -46,14 +45,14 @@ set(basic_SOURCES
         rat.cpp
         raw_attribute_store.cpp
         stop_watch.cpp
-        )
+)
 
 add_library(${PROJECT_NAME} STATIC ${basic_SOURCES} ${basic_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "City3D")
 
-if (MSVC)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-            _CRT_SECURE_NO_WARNINGS
-            _CRT_SECURE_NO_DEPRECATE
-            )
+if(MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE
+                _CRT_SECURE_NO_WARNINGS
+                _CRT_SECURE_NO_DEPRECATE
+        )
 endif()

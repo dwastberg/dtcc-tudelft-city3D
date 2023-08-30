@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
-
 
 set(model_HEADERS
         iterators.h
@@ -31,7 +30,7 @@ set(model_HEADERS
         kdtree/QueryGrid.h
         kdtree/vector2D.h
         kdtree/vector3D.h
-        )
+)
 
 set(model_SOURCES
         kdtree_search.cpp
@@ -53,7 +52,7 @@ set(model_SOURCES
         point_set.cpp
         point_set_geometry.cpp
         kdtree/kdTree.cpp
-        )
+)
 
 add_library(${PROJECT_NAME} STATIC ${model_SOURCES} ${model_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "City3D")
@@ -61,11 +60,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "City3D")
 set(LASTOOLS_INCLUDE_DIR ${3RD_PARTY_DIR}/3rd_LAStools/LASzip/src ${3RD_PARTY_DIR}/3rd_LAStools/LASlib/inc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LASTOOLS_INCLUDE_DIR})
 
-if (MSVC)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-            _CRT_SECURE_NO_WARNINGS
-            _CRT_SECURE_NO_DEPRECATE
-            )
-endif ()
+if(MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE
+                _CRT_SECURE_NO_WARNINGS
+                _CRT_SECURE_NO_DEPRECATE
+        )
+endif()
 
 target_link_libraries(${PROJECT_NAME} basic math 3rd_LAStools 3rd_rply)

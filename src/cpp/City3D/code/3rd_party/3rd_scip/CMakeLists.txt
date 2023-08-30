@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
@@ -554,14 +554,15 @@ set(scip_HEADERS
 
         xml/xmldef.h
         xml/xml.h
-        )
+)
 
 set(scip_SOURCES
         scip/scipbuildflags.c
         symmetry/compute_symmetry_none.cpp
         tpi/tpi_none.c
         blockmemshell/memory.c
-#        lpi/lpi_spx1.cpp
+
+        # lpi/lpi_spx1.cpp
         lpi/lpi_spx2.cpp
         scip/heur_octane.c
         scip/benderscut_int.c
@@ -893,7 +894,7 @@ set(scip_SOURCES
         scip/reader_fzn.c
         scip/sepa_closecuts.c
         scip/reader_cor.c
-       
+
         scip/fileio.c
         scip/exprinterpret_cppad.cpp
         scip/heur_trysol.c
@@ -939,8 +940,7 @@ set(scip_SOURCES
         objscip/objsepa.cpp
         objscip/objtable.cpp
         objscip/objvardata.cpp
-        )
-
+)
 
 add_library(${PROJECT_NAME} STATIC ${scip_SOURCES} ${scip_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -952,13 +952,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${POLYFIT_scip_DIR}
         ${POLYFIT_scip_DIR}/scip
         ${POLYFIT_soplex_DIR}/src
-        )
+)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC SCIP_NO_SIGACTION NO_CONFIG_HEADER SCIP_NO_STRTOK_R _CRT_SECURE_NO_WARNINGS TPI_NONE NPARASCIP WITH_SCIPDEF SCIP_ROUNDING_FE)
 
-if (MSVC)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-            _CRT_SECURE_NO_WARNINGS
-            _CRT_SECURE_NO_DEPRECATE
-            )
-endif ()
+if(MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE
+                _CRT_SECURE_NO_WARNINGS
+                _CRT_SECURE_NO_DEPRECATE
+        )
+endif()

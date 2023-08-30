@@ -39,14 +39,18 @@ include(cmake/clang-cxx-dev-tools.cmake)
 # # Find pybind11
 execute_process(COMMAND python -c "import site; print([s for s in site.getsitepackages() if 'site-packages' in s][0])" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(pybind11_DIR ${PYTHON_SITE_PACKAGES}/pybind11/share/cmake/pybind11)
-set(PYBIND11_FINDPYTHON ON)
 
+set(PYBIND11_FINDPYTHON ON)
 message("Pybind11 DIR " ${pybind11_DIR})
 find_package(pybind11 REQUIRED)
 
 # Set include directories
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/include)
+include_directories(${CMAKE_SOURCE_DIR}/src/cpp/external/CGAL-5.4.5/include)
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/City3D/code)
+
+# Set cmake directories
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/src/cpp/external/CGAL-5.4.5/cmake)
 
 # Set installation directory
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src)

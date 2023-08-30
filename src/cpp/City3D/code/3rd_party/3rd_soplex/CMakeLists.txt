@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
-
 
 set(soplex_HEADERS
     src/array.h
@@ -99,7 +98,7 @@ set(soplex_HEADERS
     src/vector.h
     src/vectorbase.h
     src/wallclocktimer.h
-    )
+)
 
 set(soplex_SOURCES
     src/changesoplex.cpp
@@ -165,12 +164,11 @@ set(soplex_SOURCES
     src/usertimer.cpp
     src/validation.cpp
     src/wallclocktimer.cpp
-    )
-
+)
 
 add_library(${PROJECT_NAME} STATIC ${soplex_SOURCES} ${soplex_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
-                      FOLDER "3rd_party")
+    FOLDER "3rd_party")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
@@ -180,13 +178,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${POLYFIT_lpsolve_DIR}/bfp/bfp_LUSOL
     ${POLYFIT_lpsolve_DIR}/bfp/bfp_LUSOL/LUSOL
     ${POLYFIT_lpsolve_DIR}/colamd
-    )
+)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NO_SIGACTION NO_STRTOK_R _CRT_SECURE_NO_WARNINGS TPI_NONE NPARASCIP WITH_SCIPDEF ROUNDING_FE)
 
-if (MSVC)
+if(MSVC)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         _CRT_SECURE_NO_WARNINGS
         _CRT_SECURE_NO_DEPRECATE
-        )
+    )
 endif()

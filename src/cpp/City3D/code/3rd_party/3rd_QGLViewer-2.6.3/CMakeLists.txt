@@ -1,16 +1,17 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
 
 include(../../cmake/UseQt5.cmake)
-if (NOT QT5_FOUND)
-        message(WARNING "${PROJECT_NAME} requires Qt but Qt was not found. You can set 'Qt5_DIR' to the "
-                "directory containing 'Qt5Config.cmake' or 'qt5-config.cmake' in 'CMakeCache.txt'. "
-                "Optionally, you can set the Qt5 root directory 'QT5_ROOT_PATH' to the directory "
-                "containing the 'bin' folder.")
-        return()
-endif ()
+
+if(NOT QT5_FOUND)
+    message(WARNING "${PROJECT_NAME} requires Qt but Qt was not found. You can set 'Qt5_DIR' to the "
+        "directory containing 'Qt5Config.cmake' or 'qt5-config.cmake' in 'CMakeCache.txt'. "
+        "Optionally, you can set the Qt5 root directory 'QT5_ROOT_PATH' to the directory "
+        "containing the 'bin' folder.")
+    return()
+endif()
 
 find_package(Qt5 COMPONENTS Xml)
 
@@ -41,7 +42,7 @@ set(qglviewer_HEADERS
     VRender/Vector2.h
     VRender/Vector3.h
     VRender/VRender.h
-    )
+)
 
 set(qglviewer_SOURCES
     camera.cpp
@@ -71,13 +72,11 @@ set(qglviewer_SOURCES
     VRender/Vector3.cpp
     VRender/VisibilityOptimizer.cpp
     VRender/VRender.cpp
-    )
-
+)
 
 add_library(${PROJECT_NAME} STATIC ${qglviewer_SOURCES} ${qglviewer_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
-                      FOLDER "3rd_party")
-
+    FOLDER "3rd_party")
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${POLYFIT_qglviewer_DIR}/shared
@@ -85,25 +84,23 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${POLYFIT_qglviewer_DIR}/bfp/bfp_LUSOL
     ${POLYFIT_qglviewer_DIR}/bfp/bfp_LUSOL/LUSOL
     ${POLYFIT_qglviewer_DIR}/colamd
-    )
+)
 
-
-if (MSVC)
+if(MSVC)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
-            _CRT_SECURE_NO_WARNINGS
-            _CRT_SECURE_NO_DEPRECATE
-            QGLVIEWER_STATIC
-        )
+        _CRT_SECURE_NO_WARNINGS
+        _CRT_SECURE_NO_DEPRECATE
+        QGLVIEWER_STATIC
+    )
 endif()
 
+target_link_libraries(${PROJECT_NAME} Qt5::Core)
+target_link_libraries(${PROJECT_NAME} Qt5::Gui)
+target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+target_link_libraries(${PROJECT_NAME} Qt5::OpenGL)
+target_link_libraries(${PROJECT_NAME} Qt5::Xml)
 
-target_link_libraries( ${PROJECT_NAME} Qt5::Core )
-target_link_libraries( ${PROJECT_NAME} Qt5::Gui )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
-target_link_libraries( ${PROJECT_NAME} Qt5::OpenGL )
-target_link_libraries( ${PROJECT_NAME} Qt5::Xml )
-
-set (OpenGL_GL_PREFERENCE GLVND)
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 
-target_link_libraries( ${PROJECT_NAME} ${OPENGL_LIBRARIES} )
+target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
