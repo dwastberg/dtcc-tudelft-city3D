@@ -62,7 +62,7 @@ namespace DTCC_CITY3D
     std::cout << "reconstructing the buildings (using the SCIP solver)..."
               << std::endl;
     bool status =
-        recon.reconstruct(pset, footprint_mesh, result, LinearProgramSolver::SCIP);
+        recon.reconstruct(pset, footprint_mesh, result, LinearProgramSolver::SCIP, false);
     if (!status)
     {
       std::cout << "reconstruction failed!" << std::endl;
@@ -74,7 +74,7 @@ namespace DTCC_CITY3D
 
 } // namespace DTCC_CITY3D
 
-PYBIND11_MODULE(_dtcc_tudelft_city3D, m)
+PYBIND11_MODULE(_dtcc_tudelft_city3d, m)
 {
   m.doc() = "bindings for calling TUDelft City3D algorithm with DTCC data";
   m.def("mesh_building", &DTCC_CITY3D::mesh_building,

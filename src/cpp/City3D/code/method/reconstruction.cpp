@@ -56,11 +56,12 @@ void Reconstruction::segmentation(PointSet *pset, Map *foot_print)
     }
     pset->groups().clear();
 
-//	Logger::out("-") << "building kd-tree..." << std::endl;
+    //	Logger::out("-") << "building kd-tree..." << std::endl;
     StopWatch w;
     // estimate the best z value
     double avg_z = 0.0;
-    FOR_EACH_VERTEX_CONST(Map, foot_print, it) avg_z += it->point().z;
+    FOR_EACH_VERTEX_CONST(Map, foot_print, it)
+    avg_z += it->point().z;
     avg_z /= foot_print->size_of_vertices();
 
     KdTreeSearch_var kdtree = new KdTreeSearch;
@@ -126,7 +127,6 @@ void Reconstruction::segmentation(PointSet *pset, Map *foot_print)
 
         progress.next();
     }
-
 }
 
 void Reconstruction::extract_building_roof(PointSet *pset,
@@ -135,20 +135,19 @@ void Reconstruction::extract_building_roof(PointSet *pset,
 {
     double dist_thresh = 0.001;
     double bitmap_reso = 0.05;
-    double normal_thresh = 0.85;        // the cos of the maximal normal deviation
+    double normal_thresh = 0.85; // the cos of the maximal normal deviation
     std::vector<unsigned int> p_index = *building;
     std::vector<unsigned int> remaining_ind;
 
     Region_Growing_Dectetor rg;
     const std::vector<VertexGroup::Ptr>
-            &roofs = rg.detect(pset, p_index, min_support, dist_thresh, bitmap_reso, normal_thresh);
+        &roofs = rg.detect(pset, p_index, min_support, dist_thresh, bitmap_reso, normal_thresh);
     for (std::size_t j = 0; j < roofs.size(); ++j)
     {
         const Color &c = random_color();
         roofs[j]->set_color(c);
     }
     building->set_children(roofs);
-
 }
 
 void Reconstruction::extract_roofs(PointSet *pset, Map *foot_print)
@@ -172,7 +171,6 @@ void Reconstruction::extract_roofs(PointSet *pset, Map *foot_print)
     }
     MapFacetAttribute<VertexGroup::Ptr> buildings(foot_print, "buildings");
 
-
     if (!pset->has_normals())
     {
         PointSetNormals::estimate(pset);
@@ -190,7 +188,6 @@ void Reconstruction::extract_roofs(PointSet *pset, Map *foot_print)
         extract_building_roof(pset, g, Method::number_region_growing);
         progress.next();
     }
-
 }
 
 PointSet *Reconstruction::create_roof_point_set(const PointSet *pset,
@@ -229,7 +226,7 @@ PointSet *Reconstruction::create_roof_point_set(const PointSet *pset,
         }
         new_pset->groups().push_back(group);
     }
-    //add the remaining points.
+    // add the remaining points.
     std::set_difference(full_set.begin(),
                         full_set.end(),
                         planar_set.begin(),
@@ -350,9 +347,8 @@ bool is_simple_polygon(const Map::Facet *f)
     return plg.is_simple();
 }
 
-bool
-Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, LinearProgramSolver::SolverName solver_name,
-                            bool update_display)
+bool Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, LinearProgramSolver::SolverName solver_name,
+                                 bool update_display)
 {
     if (!pset)
     {
@@ -377,7 +373,7 @@ Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, Linear
         VertexGroup::Ptr g = buildings[it];
         if (!g)
             continue;
-        //ensure the footprint is manifold
+        // ensure the footprint is manifold
         if (!is_simple_polygon(it))
         {
             ++num;
@@ -411,8 +407,8 @@ Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, Linear
             Geom::merge_into_source(result, building);
             if (update_display)
             {
-                Tessellator::invalidate();
-                MeshRender::invalidate();
+                // Tessellator::invalidate();
+                // MeshRender::invalidate();
             }
             success = true;
         }
@@ -423,7 +419,7 @@ Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, Linear
     if (num > 0)
         Logger::warn("-") << "encountered " << num << " non-simple foot print "
                           << (num > 1 ? " polygons." : " polygon.") << std::endl;
-//	Logger::out("-") << "reconstruction done. Time: " << t.elapsed() << " sec." << std::endl;
+    //	Logger::out("-") << "reconstruction done. Time: " << t.elapsed() << " sec." << std::endl;
 
     return success;
 }
@@ -453,7 +449,7 @@ std::vector<std::vector<int>> Reconstruction::compute_height_field(PointSet *pse
         plg.push_back(r);
     }
 
-    //set the image resolution, a larger value for the sparser or noisy point set, usually (0.15,0.25).
+    // set the image resolution, a larger value for the sparser or noisy point set, usually (0.15,0.25).
     double point_density = Method::point_density;
     int in_x = (x_max - x_min) / point_density, in_y = (y_max - y_min) / point_density;
     width = ogf_max(in_x, in_y);
@@ -471,11 +467,11 @@ std::vector<std::vector<int>> Reconstruction::compute_height_field(PointSet *pse
     {
         for (int k = 0; k < image_width; ++k)
         {
-            FT x = image_x_min + (k) * image_delta_res;
+            FT x = image_x_min + (k)*image_delta_res;
             FT y = image_y_min + (image_width - j - 1) * image_delta_res;
             Point_3d query_p(x, y, 0);
             vec2 q_p(CGAL::to_double(x), CGAL::to_double(y));
-            if (Geom::point_is_in_polygon(plg, q_p))// ensure the pixel point is inside  the footprint
+            if (Geom::point_is_in_polygon(plg, q_p)) // ensure the pixel point is inside  the footprint
             {
                 Face_handle fh = dt.locate(query_p);
                 auto pt0 = fh->vertex(0)->point();
@@ -495,9 +491,7 @@ std::vector<std::vector<int>> Reconstruction::compute_height_field(PointSet *pse
                         image_zmin = height;
                 }
             }
-
         }
-
     }
 
     double delta_z = 255. / (image_zmax - image_zmin);
@@ -510,14 +504,14 @@ std::vector<std::vector<int>> Reconstruction::compute_height_field(PointSet *pse
             if (n == -1)
             {
                 im[i][j] = -1;
-            } else
+            }
+            else
             {
                 im[i][j] = n * delta_z - delta_z * image_zmin;
             }
         }
     }
     return im;
-
 }
 
 std::vector<std::vector<int>> Reconstruction::detect_height_jump(PointSet *pset,
@@ -531,7 +525,7 @@ std::vector<std::vector<int>> Reconstruction::detect_height_jump(PointSet *pset,
     auto ht = h->vertex()->point().z;
 
     int sp = width;
-    std::vector<std::vector<int >> adata(im);
+    std::vector<std::vector<int>> adata(im);
     cv::Mat image3(sp, sp, CV_8UC1, cv::Scalar(0));
     for (int i = 0; i < sp; i++)
     {
@@ -543,7 +537,6 @@ std::vector<std::vector<int>> Reconstruction::detect_height_jump(PointSet *pset,
                 if (depth < 10)
                 {
                     depth = 10;
-
                 }
                 if (depth > 245)
                 {
@@ -563,8 +556,8 @@ std::vector<std::vector<int>> Reconstruction::detect_height_jump(PointSet *pset,
     int low_threshold = (2.0) * 255 / (max_height - ht);
     int high_threshold = (min_height - ht) * 255 / (max_height - ht);
     high_threshold = std::max(high_threshold, 2 * low_threshold);
-//	std::cout << "low: " << low_threshold << std::endl;
-//	std::cout << "high: " << high_threshold << std::endl;
+    //	std::cout << "low: " << low_threshold << std::endl;
+    //	std::cout << "high: " << high_threshold << std::endl;
     cv::Canny(out1, edge, low_threshold, high_threshold);
     std::vector<std::vector<int>> point(width, std::vector<int>(width, 0));
     for (std::size_t i = 0; i < sp; i++)
@@ -580,7 +573,6 @@ std::vector<std::vector<int>> Reconstruction::detect_height_jump(PointSet *pset,
 
     return point;
 }
-
 
 std::vector<vec3> Reconstruction::compute_line_segment(PointSet *seg_pset,
                                                        PointSet *roof_pset,
@@ -616,7 +608,6 @@ std::vector<vec3> Reconstruction::compute_line_segment(PointSet *seg_pset,
                     max_height = p.z;
                 }
                 cen += p;
-
             }
             cen /= num_input;
             height_seq.push_back(cen.z);
@@ -737,21 +728,21 @@ void Reconstruction::extrude_boundary_to_ground(Map *model, const Plane3d &groun
 #endif
 }
 
-Map *Reconstruction::generate_polygon(PointSet *pSet, double footprint_height,double density)
+Map *Reconstruction::generate_polygon(PointSet *pSet, double footprint_height, double density)
 {
-    //get the alpha shape of the point set
+    // get the alpha shape of the point set
     auto alpha_boundary = AlphaShapeBoundary::apply(pSet, 1.5);
-    Method::ground_height=footprint_height;
-    Method::point_density=density;
+    Method::ground_height = footprint_height;
+    Method::point_density = density;
 
-    Map* new_foot = new Map;
+    Map *new_foot = new Map;
     MapBuilder builder(new_foot);
     builder.begin_surface();
     builder.begin_facet();
-    int ind=0;
+    int ind = 0;
     for (int i = 0; i < alpha_boundary.size(); ++i)
     {
-        auto p=alpha_boundary[i];
+        auto p = alpha_boundary[i];
         builder.add_vertex(vec3(p.x, p.y, footprint_height));
         builder.add_vertex_to_facet(ind);
         ++ind;
@@ -760,7 +751,3 @@ Map *Reconstruction::generate_polygon(PointSet *pSet, double footprint_height,do
     builder.end_surface();
     return new_foot;
 }
-
-
-
-

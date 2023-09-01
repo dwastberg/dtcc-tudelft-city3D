@@ -1,5 +1,5 @@
-from _dtcc_tudelft_city3d import city3d
-import dtcc_wrang
+from dtcc_tudelft_city3d import _dtcc_tudelft_city3d
+import dtcc_wrangler
 from dtcc_model import City, PointCloud, Mesh, Building   
 import dtcc_io as io
 import numpy as np
