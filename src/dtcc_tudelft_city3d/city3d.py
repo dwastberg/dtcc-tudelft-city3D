@@ -4,7 +4,8 @@ from dtcc_model import City, PointCloud, Mesh, Building
 import dtcc_io as io
 import numpy as np
 import os
-
+import dtcc_builder as builder
+from dtcc_builder i
 import tempfile
 
 def generate_building_meshes(city: City, set_ground_to_zero=True):
@@ -18,7 +19,8 @@ def generate_building_meshes(city: City, set_ground_to_zero=True):
         pts = building.roofpoints
         ground_level = building.ground_level
         if len(pts) < 6:
-            print("Building has less than 6 points, skipping")
+            print("Building has less than 6 points, using simple extrusion")
+            building.mesh = builder.meshing.extrude_building(building, ground_to_zero=set_ground_to_zero)
             continue
         if set_ground_to_zero:
             pts[:, 2] -= ground_level
@@ -28,11 +30,13 @@ def generate_building_meshes(city: City, set_ground_to_zero=True):
         tmp_file = tmp.name
         tmp.close()
 
-        succ = city3d(pts, footprint, ground_level, tmp_file)
+        succ = _dtcc_tudelft_city3d.mesh_building(pts, footprint, ground_level, tmp_file)
         if succ:
             mesh = io.load_mesh(tmp_file)
-            os.unlink(tmp_file)
             building.mesh = mesh
         else:
-            print("Failed to generate mesh for building", building.uuid)        
+            print("Failed to generate mesh for building", building.uuid, "using simple extrusion")
+            building.mesh = builder.meshing.extrude_building(building, ground_to_zero=set_ground_to_zero)
 
+        os.remove(tmp_file)
+    return city
