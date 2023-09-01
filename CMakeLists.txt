@@ -26,9 +26,6 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 endif()
 
-# Add path to local CMake scripts
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
 # Add clang tools
 include(cmake/clang-cxx-dev-tools.cmake)
 
@@ -44,13 +41,22 @@ set(PYBIND11_FINDPYTHON ON)
 message("Pybind11 DIR " ${pybind11_DIR})
 find_package(pybind11 REQUIRED)
 
+#
+set(CGAL_PATH ${CMAKE_SOURCE_DIR}/src/cpp/external/CGAL-5.4.5)
+
+# Add path to local CMake scripts
+# Set cmake directories
+# list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CGAL_PATH}/cmake")
+list(APPEND CMAKE_PREFIX_PATH "${CGAL_PATH}/cmake")
+
+message("CMAKE_MODULE_PATH " ${CMAKE_MODULE_PATH})
+message("CMAKE_PREFIX_PATH " ${CMAKE_PREFIX_PATH})
+
 # Set include directories
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/include)
-include_directories(${CMAKE_SOURCE_DIR}/src/cpp/external/CGAL-5.4.5/include)
+include_directories(${CGAL_PATH}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src/cpp/City3D/code)
-
-# Set cmake directories
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/src/cpp/external/CGAL-5.4.5/cmake)
 
 # Set installation directory
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src)
