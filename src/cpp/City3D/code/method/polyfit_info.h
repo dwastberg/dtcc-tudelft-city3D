@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef _POLYFIT_DATA_H_
 #define _POLYFIT_DATA_H_
 
-
 #include "../math/math_types.h"
 #include "../model/map_attributes.h"
 #include "../model/vertex_group.h"
@@ -28,44 +27,42 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <vector>
 #include <string>
 
-
 class PointSet;
 class Map;
 class VertexGroup;
 
-
-class PolyFitInfo {
+class PolyFitInfo
+{
 public:
 	PolyFitInfo() {}
 	~PolyFitInfo() { clear(); }
 
-	void generate(PointSet* pset, Map* mesh, std::vector < Plane3d* > &v,  bool use_conficence = false);
+	void generate(PointSet *pset, Map *mesh, std::vector<Plane3d *> &v, bool use_conficence = false);
 
-	bool ready_for_optimization(Map* mesh) const;
+	bool ready_for_optimization(Map *mesh) const;
 
 	void clear();
 
-	std::vector<Plane3d*>  planes;		// including the bbox face planes
-	double				   max_dist;	// maximum distance to the supporting plane
+	std::vector<Plane3d *> planes; // including the bbox face planes
+	double max_dist;			   // maximum distance to the supporting plane
 
-	MapFacetAttribute<VertexGroup*> facet_attrib_supporting_vertex_group;
-	MapFacetAttribute<Plane3d*>		facet_attrib_supporting_plane;
+	MapFacetAttribute<VertexGroup *> facet_attrib_supporting_vertex_group;
+	MapFacetAttribute<Plane3d *> facet_attrib_supporting_plane;
 
-	MapFacetAttribute<double>		facet_attrib_supporting_point_num;
-	MapFacetAttribute<double>		facet_attrib_facet_area;
-	MapFacetAttribute<double>		facet_attrib_covered_area;
+	MapFacetAttribute<double> facet_attrib_supporting_point_num;
+	MapFacetAttribute<double> facet_attrib_facet_area;
+	MapFacetAttribute<double> facet_attrib_covered_area;
 
-	std::map<Map::Halfedge*, Plane3d*>			foot_print_edge_derived_plane;
-	std::map<Map::Halfedge*, VertexGroup::Ptr>	foot_print_edge_derived_vertex_group;
+	std::map<Map::Halfedge *, Plane3d *> foot_print_edge_derived_plane;
+	std::map<Map::Halfedge *, VertexGroup::Ptr> foot_print_edge_derived_vertex_group;
 
 private:
 	// std::vector<unsigned int>& points returns the point indices projected in f.
 	// returns the 'number' of points projected in f (accounts for a notion of confidence)
-	double facet_points_projected_in(PointSet* pset, VertexGroup* g, MapTypes::Facet* f, double max_dist, std::vector<unsigned int>& points);
+	double facet_points_projected_in(PointSet *pset, VertexGroup *g, MapTypes::Facet *f, double max_dist, std::vector<unsigned int> &points);
 
 	// returns average spacing
-	double compute_point_confidences(PointSet* pset, int s1 = 6, int s2 = 16, int s3 = 32);
+	double compute_point_confidences(PointSet *pset, int s1 = 6, int s2 = 16, int s3 = 32);
 };
-
 
 #endif

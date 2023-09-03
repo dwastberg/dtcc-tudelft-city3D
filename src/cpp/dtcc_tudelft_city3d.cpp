@@ -6,14 +6,15 @@
 #include <string>
 
 #include "model/map_builder.h"
-#include "model/map_enumerator.h"
-#include "model/map_serializer_json.h"
+// #include "model/map_enumerator.h"
+// #include "model/map_serializer_json.h"
 
 #include "method/reconstruction.h"
 #include "model/map.h"
 #include "model/map_io.h"
 #include "model/point_set.h"
 #include "model/point_set_io.h"
+
 namespace py = pybind11;
 
 namespace DTCC_CITY3D
@@ -45,6 +46,9 @@ namespace DTCC_CITY3D
       builder.add_vertex_to_facet(idx);
       idx++;
     }
+    vec3 p(footprint_r(0, 0), footprint_r(0, 1), ground_height);
+    builder.add_vertex(p);
+    builder.add_vertex_to_facet(idx + 1);
     builder.end_facet();
     builder.end_surface();
 
@@ -68,7 +72,9 @@ namespace DTCC_CITY3D
       std::cout << "reconstruction failed!" << std::endl;
       return false;
     }
+    std::cout << "reconstruction done!" << std::endl;
     MapIO::save(tmp_file, result);
+    std::cout << "saved to " << tmp_file << std::endl;
     return true;
   }
 

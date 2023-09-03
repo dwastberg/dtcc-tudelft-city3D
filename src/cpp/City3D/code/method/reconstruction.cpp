@@ -289,7 +289,7 @@ PointSet *Reconstruction::create_projected_point_set(const PointSet *pset, const
     std::vector<unsigned int> nbs;
     double r = box.radius();
     kdtree->find_points_in_radius(box.center(), r * r, nbs);
-
+    std::cout << "nbs.size() " << nbs.size() << std::endl;
     std::vector<unsigned char> inside(nbs.size(), 0);
 #pragma omp parallel for
     for (int i = 0; i < nbs.size(); ++i)
@@ -305,8 +305,9 @@ PointSet *Reconstruction::create_projected_point_set(const PointSet *pset, const
     VertexGroup::Ptr g = new VertexGroup;
     for (int i = 0; i < nbs.size(); ++i)
     {
-        if (inside[i])
+        if (1)
         {
+            std::cout << "push_back " << nbs[i] << std::endl;
             g->push_back(nbs[i]);
         }
     }
@@ -315,11 +316,14 @@ PointSet *Reconstruction::create_projected_point_set(const PointSet *pset, const
     int count = 0;
     VertexGroup::Ptr group = new VertexGroup;
     group->set_point_set(new_pset);
+    std::cout << "g->size() " << g->size() << std::endl;
     for (int j = 0; j < g->size(); ++j)
     {
         int idx = g->at(j);
         auto p = backup_points[idx];
-        if (p.z < z_max)
+        std::cout << "p.x " << p.x << " p.y " << p.y << " p.z " << p.z << std::endl;
+        std::cout << "z_max " << z_max << std::endl;
+        if (p.z <= z_max)
         {
             new_pset->points().push_back(p);
             group->push_back(count);
@@ -367,24 +371,31 @@ bool Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, L
     kdtree->begin();
 
     int idx = 0;
+    std::cout << "foot_print->size_of_facets() " << foot_print->size_of_facets() << std::endl;
     FOR_EACH_FACET(Map, foot_print, it)
     {
         std::cout << "processing " << ++idx << "/" << foot_print->size_of_facets() << " building..." << std::endl;
         VertexGroup::Ptr g = buildings[it];
+        std::cout << "1" << std::endl;
         if (!g)
             continue;
+        std::cout << "2" << std::endl;
         // ensure the footprint is manifold
         if (!is_simple_polygon(it))
         {
+            std::cout << "not simple polygon" << std::endl;
             ++num;
             continue;
         }
+        std::cout << "3" << std::endl;
 
         std::vector<VertexGroup::Ptr> &roofs = g->children();
+        std::cout << "4" << std::endl;
         for (std::size_t i = 0; i < roofs.size(); ++i)
         {
             VertexGroup *g = roofs[i];
         }
+        std::cout << "5" << std::endl;
         unsigned int min_support = 30;
         while (roofs.empty())
         {
@@ -392,18 +403,28 @@ bool Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, L
             min_support *= 0.7;
         }
 
-        PointSet::Ptr roof_pset = create_roof_point_set(pset, roofs, g);
-        PointSet::Ptr image_pset = create_projected_point_set(pset, roof_pset);
+        std::cout << "6" << std::endl;
 
+        PointSet::Ptr roof_pset = create_roof_point_set(pset, roofs, g);
+        std::cout << "7" << std::endl;
+        PointSet::Ptr image_pset = create_projected_point_set(pset, roof_pset);
+        // PointSet::Ptr image_pset = roof_pset;
+        std::cout << "8" << std::endl;
         if (roof_pset->num_points() < 20)
         {
+            std::cout << "roof_pset->num_points() < 20" << std::endl;
             continue;
         }
+        std::cout << "9" << std::endl;
+        std::cout << "roof_pset->num_points() " << roof_pset->num_points() << std::endl;
+        std::cout << "image_pset->num_points() " << image_pset->num_points() << std::endl;
         auto line_segs = compute_line_segment(image_pset, roof_pset, it);
+        std::cout << "10" << std::endl;
         Map *building = reconstruct_single_building(roof_pset, line_segs, it, solver_name);
-
+        std::cout << "11" << std::endl;
         if (building)
         {
+            std::cout << "building merge" << std::endl;
             Geom::merge_into_source(result, building);
             if (update_display)
             {
@@ -412,10 +433,16 @@ bool Reconstruction::reconstruct(PointSet *pset, Map *foot_print, Map *result, L
             }
             success = true;
         }
+        std::cout << "12" << std::endl;
         roofs.clear();
+        std::cout << "13" << std::endl;
         progress.next();
     }
-
+    std::cout << "14" << std::endl;
+    if (success)
+        std::cout << "All buildings are processed!" << std::endl;
+    else
+        std::cout << "Not all building succeded" << std::endl;
     if (num > 0)
         Logger::warn("-") << "encountered " << num << " non-simple foot print "
                           << (num > 1 ? " polygons." : " polygon.") << std::endl;
